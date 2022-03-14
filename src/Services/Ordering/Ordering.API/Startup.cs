@@ -1,6 +1,3 @@
-﻿using Basket.API.GrpcServices;
-using Basket.API.Repositories;
-using Discount.Grpc.Protos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -14,14 +11,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Basket.API
+namespace Ordering.API
 {
     public class Startup
     {
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
         }
 
         public IConfiguration Configuration { get; }
@@ -29,31 +25,14 @@ namespace Basket.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //Comment by TUNT19 Redis Configuration
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString");
-            });
-            //End comment by TUNT19 Redis Configuration
-
-            //Comment by TUNT19 General Configuration
-            services.AddScoped<IBasketRepository, BasketRepository>();
-            //End comment by TUNT19 General Configuration
-
-            //Comment by TUNT19 Add GRPC Configuration
-            services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(
-                options => options.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]));
-
-            services.AddScoped<DiscountGrpcService>();
-
-            //End comment by TUNT19 Add GRPC Configuration
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket.API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ordering.API", Version = "v1" });
             });
         }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -61,7 +40,7 @@ namespace Basket.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Basket.API v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ordering.API v1"));
             }
 
             app.UseRouting();
